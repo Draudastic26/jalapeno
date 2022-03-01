@@ -5,28 +5,28 @@ import mu.KotlinLogging
 
 private val logger = KotlinLogging.logger {}
 
-data class Appearance(val name: String, val color: String, val head: String, val tail: String)
+data class Description(val name: String, val color: String, val head: String, val tail: String)
 
 abstract class BattleSnake {
 
-    abstract val appearance: Appearance
+    abstract val description: Description
     protected abstract fun decideMove(moveRequest: MoveRequest): MoveResponse
 
     fun describe(): DescribeResponse {
-        logger.info { "[${appearance.name}] Describe!" }
-        return DescribeResponse("1", "Draudastic", appearance.color, appearance.head, appearance.tail, "1")
+        logger.info { "[${description.name}] Describe!" }
+        return DescribeResponse("1", "Draudastic", description.color, description.head, description.tail, "1")
     }
 
     fun start(startRequest: StartRequest) {
-        logger.info { "[${appearance.name}] Start! ${startRequest.game.id}" }
+        logger.info { "[${description.name}] Start! ${startRequest.game.id}" }
     }
 
     fun move(moveRequest: MoveRequest): MoveResponse {
-        logger.info { "[${appearance.name}] Move!" }
+        logger.info { "[${description.name}] Move!" }
         return decideMove(moveRequest)
     }
 
     fun end(endRequest: EndRequest) {
-        logger.info { "[${appearance.name}] End! ${endRequest.game.id}" }
+        logger.info { "[${description.name}] End! ${endRequest.game.id}" }
     }
 }

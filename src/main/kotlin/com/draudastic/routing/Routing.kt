@@ -16,7 +16,7 @@ fun Application.configureRouting(snake: BattleSnake) {
             call.respond(snake.describe())
         }
         get("/hello") {
-            call.respondText("Hello ${snake.appearance.name}")
+            call.respondText("Hello ${snake.description.name}")
         }
         post("/start") {
             val request = call.receive<StartRequest>()

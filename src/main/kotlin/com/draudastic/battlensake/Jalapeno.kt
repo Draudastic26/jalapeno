@@ -48,7 +48,9 @@ class Jalapeno : BattleSnake() {
     private fun getPossibleMoves(head: Position, avoidPositions: HashSet<Position>): Collection<Move> {
         val possibleMoves = mutableListOf(Move.Up, Move.Right, Move.Down, Move.Left)
         Move.values().forEach { move ->
-            if (avoidPositions.contains(nextPosition(head, move))) possibleMoves.remove(move)
+            val nextPos = nextPosition(head, move)
+            logger.info { "[${info.name}] Next $nextPos" }
+            if (avoidPositions.contains(nextPos)) possibleMoves.remove(move)
         }
         return possibleMoves
     }

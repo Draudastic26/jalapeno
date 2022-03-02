@@ -2,6 +2,10 @@ package com.draudastic.battlensake
 
 import com.draudastic.models.*
 import com.draudastic.utils.distance
+import mu.KotlinLogging
+
+private val logger = KotlinLogging.logger {}
+
 
 class Jalapeno : BattleSnake() {
 
@@ -16,14 +20,21 @@ class Jalapeno : BattleSnake() {
         // avoid snakes
         avoidPositions += moveRequest.board.snakes.flatMap { snake -> snake.body.map { body -> body.position } }
 
+        logger.info { "[${info.name}] Head at ${moveRequest.you.head}" }
+        logger.info { "[${info.name}] Avoid $avoidPositions" }
+
         val possibleMoves = getPossibleMoves(moveRequest.you.head, avoidPositions)
         val closestFood = getClosedFood(moveRequest.you.head, moveRequest.board.food)
 
-        return if (closestFood != null) {
-            MoveResponse(goToFood(moveRequest.you.head, closestFood, possibleMoves))
+        val nextMove = if (closestFood != null) {
+            logger.info { "[${info.name}] Food at ${closestFood.position}" }
+            goToFood(moveRequest.you.head, closestFood, possibleMoves)
         } else {
-            MoveResponse(possibleMoves.first())
+            possibleMoves.first()
         }
+
+        logger.info { "[${info.name}] Chose $nextMove out of $possibleMoves" }
+        return MoveResponse(nextMove)
     }
 
     private fun goToFood(head: Position, closestFood: Food, possibleMoves: Collection<Move>): Move {

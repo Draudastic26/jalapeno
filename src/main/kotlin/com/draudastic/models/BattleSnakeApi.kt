@@ -51,7 +51,7 @@ data class Settings(
     val foodSpawnChance: Int,
     val minimumFood: Int,
     val hazardDamagePerTurn: Int,
-    val map: String,
+    val map: String = "default",
     val royale: Royale,
     val squad: Squad
 )

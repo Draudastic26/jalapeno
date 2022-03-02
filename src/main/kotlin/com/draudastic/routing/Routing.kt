@@ -13,10 +13,7 @@ import io.ktor.server.routing.*
 fun Application.configureRouting(snake: BattleSnake) {
     routing {
         get("/") {
-            call.respond(snake.describe())
-        }
-        get("/hello") {
-            call.respondText("Hello ${snake.description.name}")
+            call.respond(snake.info())
         }
         post("/start") {
             val request = call.receive<StartRequest>()

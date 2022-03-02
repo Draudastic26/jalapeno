@@ -7,7 +7,7 @@ import com.draudastic.models.Position
 
 class Jalapeno : BattleSnake() {
 
-    override val description = Description("Jalapeño", "#004d00", "pixel", "pixel")
+    override val info = Info("Jalapeño", "#004d00", "pixel", "pixel", "1.0.0")
 
     override fun decideMove(moveRequest: MoveRequest): MoveResponse {
         val avoidPositions = mutableSetOf<Position>().toHashSet()

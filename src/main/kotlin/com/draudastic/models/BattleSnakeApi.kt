@@ -4,7 +4,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class DescribeResponse(
+data class InfoResponse(
     val apiversion: String,
     val author: String,
     val color: String,

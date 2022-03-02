@@ -66,8 +66,14 @@ class Jalapeno : BattleSnake() {
 
     private fun wallPositions(width: Int, height: Int): Collection<Position> {
         val walls = mutableListOf<Position>()
-        for (x in 0 until width) walls += Position(x, -1)
-        for (y in 0 until height) walls += Position(-1, y)
+        for (x in 0 until width) {
+            walls += Position(x, -1)
+            walls += Position(x, height)
+        }
+        for (y in 0 until height) {
+            walls += Position(-1, y)
+            walls += Position(width, y)
+        }
         return walls
     }
 }

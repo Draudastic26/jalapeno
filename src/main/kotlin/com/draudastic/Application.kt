@@ -5,6 +5,7 @@ import com.draudastic.routing.configureRouting
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.application.*
 import io.ktor.server.plugins.*
+import kotlinx.serialization.json.Json
 
 fun main(args: Array<String>): Unit =
     io.ktor.server.netty.EngineMain.main(args)
@@ -13,7 +14,11 @@ fun main(args: Array<String>): Unit =
 fun Application.module() {
 
     install(ContentNegotiation) {
-        json()
+        json(Json {
+            isLenient = true
+            encodeDefaults = true
+            ignoreUnknownKeys = true
+        })
     }
 
     // Init your snake here 🐍

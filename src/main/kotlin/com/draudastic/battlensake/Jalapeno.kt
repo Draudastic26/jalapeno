@@ -20,25 +20,21 @@ class Jalapeno : BattleSnake() {
         // avoid snakes
         avoidPositions += moveRequest.board.snakes.flatMap { snake -> snake.body.map { body -> body.position } }
 
-        logger.info { "[${info.name}] Head at ${moveRequest.you.head}" }
-        logger.info { "[${info.name}] Avoid $avoidPositions" }
-
         val possibleMoves = getPossibleMoves(moveRequest.you.head, avoidPositions)
         val closestFood = getClosedFood(moveRequest.you.head, moveRequest.board.food)
 
         val nextMove = if (closestFood != null) {
-            logger.info { "[${info.name}] Food at ${closestFood.position}" }
             goToFood(moveRequest.you.head, closestFood, possibleMoves)
         } else {
             possibleMoves.first()
         }
 
-        logger.info { "[${info.name}] Chose $nextMove out of $possibleMoves" }
+        logger.info { "[${info.name}] Go $nextMove!" }
         return MoveResponse(nextMove)
     }
 
     private fun goToFood(head: Position, closestFood: Food, possibleMoves: Collection<Move>): Move {
-        return possibleMoves.minByOrNull { distance(head, closestFood.position) } ?: possibleMoves.first()
+        return possibleMoves.minByOrNull { distance(nextPosition(head, it), closestFood.position) } ?: possibleMoves.first()
     }
 
     private fun getClosedFood(head: Position, foods: Collection<Food>): Food? {
@@ -49,7 +45,6 @@ class Jalapeno : BattleSnake() {
         val possibleMoves = mutableListOf(Move.Up, Move.Right, Move.Down, Move.Left)
         Move.values().forEach { move ->
             val nextPos = nextPosition(head, move)
-            logger.info { "[${info.name}] Next $nextPos" }
             if (avoidPositions.contains(nextPos)) possibleMoves.remove(move)
         }
         return possibleMoves

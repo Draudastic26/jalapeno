@@ -1,11 +1,12 @@
 package com.draudastic
 
-import com.draudastic.battlensake.Jalapeno
+import com.draudastic.battlensake.Info
+import com.draudastic.battlensake.SimpleSnake
 import com.draudastic.routing.configureRouting
+import com.draudastic.routing.configureSnakesRouting
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.application.*
 import io.ktor.server.plugins.*
-import kotlinx.serialization.json.Json
 
 fun main(args: Array<String>): Unit =
     io.ktor.server.netty.EngineMain.main(args)
@@ -14,14 +15,17 @@ fun main(args: Array<String>): Unit =
 fun Application.module() {
 
     install(ContentNegotiation) {
-        json(Json {
-            isLenient = true
-            encodeDefaults = true
-            ignoreUnknownKeys = true
-        })
+        json()
     }
 
-    // Init your snake here 🐍
-    val battleSnake = Jalapeno()
-    configureRouting(battleSnake)
+    // Init your snakes here 🐍
+    val jalapeno = SimpleSnake(
+        Info("Jalapeño", "#004d00", "pixel", "pixel", "1.0.0")
+    )
+    configureRouting(jalapeno)
+
+    val habanero = SimpleSnake(
+        Info("Habanero", "#c11e2b", "pixel", "pixel", "1.0.0")
+    )
+    configureSnakesRouting(listOf(jalapeno, habanero))
 }

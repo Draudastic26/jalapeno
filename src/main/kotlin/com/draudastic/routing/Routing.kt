@@ -31,3 +31,15 @@ fun Application.configureRouting(snake: BattleSnake) {
         }
     }
 }
+
+fun Application.configureSnakesRouting(snakes: Collection<BattleSnake>) {
+    routing {
+        for (snake in snakes) {
+            route("/${snake.info.name}") {
+                get("/") {
+                    call.respond(snake.info())
+                }
+            }
+        }
+    }
+}

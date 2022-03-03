@@ -7,9 +7,7 @@ import mu.KotlinLogging
 private val logger = KotlinLogging.logger {}
 
 
-class Jalapeno : BattleSnake() {
-
-    override val info = Info("Jalapeño", "#004d00", "pixel", "pixel", "1.0.0")
+class SimpleSnake(override val info: Info) : BattleSnake() {
 
     override fun decideMove(moveRequest: MoveRequest): MoveResponse {
         val avoidPositions = mutableSetOf<Position>().toHashSet()

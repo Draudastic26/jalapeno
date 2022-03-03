@@ -2,8 +2,7 @@ package com.draudastic
 
 import com.draudastic.battlensake.Info
 import com.draudastic.battlensake.SimpleSnake
-import com.draudastic.routing.configureRouting
-import com.draudastic.routing.configureSnakesRouting
+import com.draudastic.routing.configureRoutings
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.application.*
 import io.ktor.server.plugins.*
@@ -22,10 +21,13 @@ fun Application.module() {
     val jalapeno = SimpleSnake(
         Info("Jalapeño", "#004d00", "pixel", "pixel", "1.0.0")
     )
-    configureRouting(jalapeno)
-
     val habanero = SimpleSnake(
         Info("Habanero", "#c11e2b", "pixel", "pixel", "1.0.0")
     )
-    configureSnakesRouting(listOf(jalapeno, habanero))
+    val snakes = listOf(
+        jalapeno,
+        habanero
+    )
+
+    configureRoutings(snakes)
 }

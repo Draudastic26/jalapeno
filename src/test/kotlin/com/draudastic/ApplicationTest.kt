@@ -2,7 +2,7 @@ package com.draudastic
 
 import com.draudastic.battlensake.Info
 import com.draudastic.battlensake.SimpleSnake
-import com.draudastic.routing.configureRouting
+import com.draudastic.routing.configureRoutings
 import io.ktor.http.*
 import io.ktor.server.testing.*
 import kotlin.test.Test
@@ -12,9 +12,11 @@ class ApplicationTest {
     @Test
     fun testRoot() {
         withTestApplication({
-            configureRouting(
-                SimpleSnake(
-                    Info("Jalapeño", "#004d00", "pixel", "pixel", "1.0.0")
+            configureRoutings(
+                listOf(
+                    SimpleSnake(
+                        Info("Jalapeño", "#004d00", "pixel", "pixel", "1.0.0")
+                    )
                 )
             )
         }) {

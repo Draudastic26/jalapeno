@@ -41,7 +41,7 @@ enum class Move {
 }
 
 @Serializable
-data class Game(val id: String, val ruleset: Ruleset, val timeout: Int)
+data class Game(val id: String, val ruleset: Ruleset, val timeout: Int, val source: String)
 
 @Serializable
 data class Ruleset(val name: String, val version: String, val settings: Settings)

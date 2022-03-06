@@ -22,7 +22,6 @@ abstract class BattleSnake {
     }
 
     fun move(moveRequest: MoveRequest): MoveResponse {
-        logger.info { "[${info.name}] Move!" }
         return decideMove(moveRequest)
     }
 

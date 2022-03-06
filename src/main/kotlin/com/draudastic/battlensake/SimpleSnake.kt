@@ -17,9 +17,16 @@ class SimpleSnake(override val info: Info) : BattleSnake() {
         if (!isWrapped)
             avoidPositions += wallPositions(moveRequest.board.width, moveRequest.board.height)
         // avoid hazards if health
-        avoidPositions += moveRequest.board.hazards.map { it.position }
+        val hazards = moveRequest.board.hazards.map { it.position }
+        avoidPositions += hazards
         // avoid snakes
-        avoidPositions += moveRequest.board.snakes.flatMap { snake -> snake.body.map { body -> body.position } }
+        val snakes = moveRequest.board.snakes.flatMap { snake -> snake.body.map { body -> body.position } }
+        avoidPositions += snakes
+        // Add wrapped positions to avoid
+        if (isWrapped) {
+            avoidPositions += hazards.flatMap { getMirroredPositions(it, moveRequest.board.width, moveRequest.board.height) }
+            avoidPositions += snakes.flatMap { getMirroredPositions(it, moveRequest.board.width, moveRequest.board.height) }
+        }
 
         val possibleMoves = getPossibleMoves(moveRequest.you.head, avoidPositions)
         val closestFood = getClosedFood(
@@ -56,15 +63,23 @@ class SimpleSnake(override val info: Info) : BattleSnake() {
         return if (isWrapped) {
             val withWrappedFoods = foods.toMutableSet()
             foods.forEach { food ->
-                withWrappedFoods += Food(food.x, food.y + boardHeight)
-                withWrappedFoods += Food(food.x + boardWidth, food.y)
-                withWrappedFoods += Food(food.x, food.y - boardHeight)
-                withWrappedFoods += Food(food.x - boardWidth, food.y)
+                withWrappedFoods += getMirroredPositions(food.position, boardWidth, boardHeight).map {
+                    Food(it.x, it.y)
+                }
             }
             withWrappedFoods.minByOrNull { distance(head, it.position) }
         } else {
             foods.minByOrNull { distance(head, it.position) }
         }
+    }
+
+    private fun getMirroredPositions(position: Position, boardWidth: Int, boardHeight: Int): Collection<Position> {
+        return listOf(
+            Position(position.x, position.y + boardHeight),
+            Position(position.x + boardWidth, position.y),
+            Position(position.x, position.y - boardHeight),
+            Position(position.x - boardWidth, position.y)
+        )
     }
 
     private fun getPossibleMoves(head: Position, avoidPositions: HashSet<Position>): Collection<Move> {

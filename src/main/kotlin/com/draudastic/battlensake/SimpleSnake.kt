@@ -10,16 +10,25 @@ private val logger = KotlinLogging.logger {}
 class SimpleSnake(override val info: Info) : BattleSnake() {
 
     override fun decideMove(moveRequest: MoveRequest): MoveResponse {
+        val isWrapped = moveRequest.game.ruleset.name == "wrapped"
+
         val avoidPositions = mutableSetOf<Position>().toHashSet()
-        // avoid walls
-        avoidPositions += wallPositions(moveRequest.board.width, moveRequest.board.height)
-        // avoid hazards
+        // avoid walls if not wrapped
+        if (!isWrapped)
+            avoidPositions += wallPositions(moveRequest.board.width, moveRequest.board.height)
+        // avoid hazards if health
         avoidPositions += moveRequest.board.hazards.map { it.position }
         // avoid snakes
         avoidPositions += moveRequest.board.snakes.flatMap { snake -> snake.body.map { body -> body.position } }
 
         val possibleMoves = getPossibleMoves(moveRequest.you.head, avoidPositions)
-        val closestFood = getClosedFood(moveRequest.you.head, moveRequest.board.food)
+        val closestFood = getClosedFood(
+            moveRequest.you.head,
+            moveRequest.board.food,
+            isWrapped,
+            moveRequest.board.width,
+            moveRequest.board.height
+        )
 
         val nextMove = if (closestFood != null) {
             goToFood(moveRequest.you.head, closestFood, possibleMoves)
@@ -32,11 +41,30 @@ class SimpleSnake(override val info: Info) : BattleSnake() {
     }
 
     private fun goToFood(head: Position, closestFood: Food, possibleMoves: Collection<Move>): Move {
-        return possibleMoves.minByOrNull { distance(nextPosition(head, it), closestFood.position) } ?: possibleMoves.first()
+        return possibleMoves.minByOrNull { distance(nextPosition(head, it), closestFood.position) }
+            ?: possibleMoves.first()
     }
 
-    private fun getClosedFood(head: Position, foods: Collection<Food>): Food? {
-        return foods.minByOrNull { distance(head, it.position) }
+    private fun getClosedFood(
+        head: Position,
+        foods: Collection<Food>,
+        isWrapped: Boolean,
+        boardWidth: Int,
+        boardHeight: Int
+    ): Food? {
+        // Add "wrapped" foods when in wrapped mode
+        return if (isWrapped) {
+            val withWrappedFoods = foods.toMutableSet()
+            foods.forEach { food ->
+                withWrappedFoods += Food(food.x, food.y + boardHeight)
+                withWrappedFoods += Food(food.x + boardWidth, food.y)
+                withWrappedFoods += Food(food.x, food.y - boardHeight)
+                withWrappedFoods += Food(food.x - boardWidth, food.y)
+            }
+            withWrappedFoods.minByOrNull { distance(head, it.position) }
+        } else {
+            foods.minByOrNull { distance(head, it.position) }
+        }
     }
 
     private fun getPossibleMoves(head: Position, avoidPositions: HashSet<Position>): Collection<Move> {

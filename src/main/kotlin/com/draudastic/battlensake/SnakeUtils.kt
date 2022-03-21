@@ -105,7 +105,7 @@ fun getAllMovePositions(start: Position): Collection<Position> {
 
 fun goToPosition(head: Position, targetPosition: Position, possibleMoves: Collection<Move>): Move {
     return possibleMoves.minByOrNull { distance(getMovePosition(head, it), targetPosition) }
-        ?: possibleMoves.random()
+        ?: possibleMoves.randomOrNull() ?: Move.Up
 }
 
 fun Snake.isLargestSnake(snakes: Collection<Snake>): Boolean {

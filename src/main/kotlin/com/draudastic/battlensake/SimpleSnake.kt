@@ -20,12 +20,7 @@ class SimpleSnake(override val info: Info) : BattleSnake() {
         val possibleMovesWithoutClosedAreaMove = state.removeClosedAreas(possibleMoves)
         if (possibleMovesWithoutClosedAreaMove.isNotEmpty()) possibleMoves = possibleMovesWithoutClosedAreaMove
 
-        var target = state.you.body.last().position
-
-        val closestFood = state.getClosestFood()
-        if (closestFood != null) {
-            target = closestFood.position
-        }
+        val target = state.getClosestFood()?.position ?: state.you.body.last().position
 
         val nextMove = action.moveTowards(state.you.head, target, possibleMoves)
 

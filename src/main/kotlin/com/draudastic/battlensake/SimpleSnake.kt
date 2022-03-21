@@ -20,7 +20,7 @@ class SimpleSnake(override val info: Info) : BattleSnake() {
         val closestFood = state.getClosestFood()
         var target = state.you.body.last().position
 
-        if (closestFood != null && state.you.health < 20) {
+        if (closestFood != null) {
             target = closestFood.position
         }
 

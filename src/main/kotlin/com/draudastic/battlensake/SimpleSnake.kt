@@ -1,5 +1,6 @@
 package com.draudastic.battlensake
 
+import com.draudastic.algo.SpanFilling.fill
 import com.draudastic.models.MoveRequest
 import com.draudastic.models.MoveResponse
 import mu.KotlinLogging
@@ -19,6 +20,7 @@ class SimpleSnake(override val info: Info) : BattleSnake() {
         } else {
             possibleMoves.random()
         }
+        state.fill()
 
         logger.info { "[${info.name}] Go $nextMove!" }
         return MoveResponse(nextMove)

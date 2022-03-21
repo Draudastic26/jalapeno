@@ -16,15 +16,16 @@ class SimpleSnake(override val info: Info) : BattleSnake() {
         var possibleMoves = action.getPossibleMoves(state.you.head, avoidPositions)
 
         logger.info { "[${info.name}] Remaining moves: $possibleMoves" }
-        possibleMoves = state.removeClosedAreas(possibleMoves)
+        possibleMoves = possibleMoves.filter { !largerSnakeNearby(state.you.head.getMovePosition(it)) }
+        val possibleMovesWithoutClosedAreaMove = state.removeClosedAreas(possibleMoves)
+        if (possibleMovesWithoutClosedAreaMove.isNotEmpty()) possibleMoves = possibleMovesWithoutClosedAreaMove
 
         var target = state.you.body.last().position
 
         val closestFood = state.getClosestFood()
-        if (closestFood != null && !largerSnakeNearby(closestFood.position)) {
+        if (closestFood != null) {
             target = closestFood.position
         }
-
 
         val nextMove = action.moveTowards(state.you.head, target, possibleMoves)
 

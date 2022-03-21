@@ -45,10 +45,9 @@ class BoardState {
         // avoid walls if not wrapped
         if (!isWrapped)
             avoidPositions += wallPositions()
-        // avoid snakes (exclude heads)
-        val snakes = board.snakes.flatMap { snake -> snake.body.drop(1).map { body -> body.position } }.toMutableSet()
+        // avoid snakes
+        val snakes = board.snakes.flatMap { snake -> snake.body.map { body -> body.position } }
         // Add own head again
-        snakes.add(you.head)
         avoidPositions += snakes
         // Add wrapped snake positions to avoid
         if (isWrapped) {

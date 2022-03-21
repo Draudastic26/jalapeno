@@ -1,5 +1,6 @@
 package com.draudastic
 
+import com.draudastic.battlensake.AggroSnake
 import com.draudastic.battlensake.Info
 import com.draudastic.battlensake.SimpleSnake
 import com.draudastic.routing.configureRoutings
@@ -21,7 +22,7 @@ fun Application.module() {
     val jalapeno = SimpleSnake(
         Info("Jalapeño", "#004d00", "pixel", "pixel", "1.0.0")
     )
-    val habanero = SimpleSnake(
+    val habanero = AggroSnake(
         Info("Habanero", "#c11e2b", "pixel", "pixel", "1.0.0")
     )
     val snakes = listOf(

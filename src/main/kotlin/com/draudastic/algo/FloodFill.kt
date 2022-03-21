@@ -1,14 +1,39 @@
 package com.draudastic.algo
 
 import com.draudastic.battlensake.BoardState
+import com.draudastic.battlensake.getMovePosition
+import com.draudastic.models.Move
 import com.draudastic.models.Position
+import mu.KotlinLogging
 
-data class SpanFillSet(val x1: Int, val x2: Int, val y: Int, val dy: Int)
+private val logger = KotlinLogging.logger {}
 
-object SpanFilling {
+
+data class FloodFillSet(val x1: Int, val x2: Int, val y: Int, val dy: Int)
+enum class FloodFillAlgo { SimpleFill, AdvancedFill }
+
+object FloodFill {
+
+    fun BoardState.removeClosedAreas(
+        possibleMoves: Collection<Move>,
+        algo: FloodFillAlgo = FloodFillAlgo.SimpleFill
+    ): Collection<Move> {
+        return possibleMoves.filter {
+            val pos = this.you.head.getMovePosition(it)
+            val fillCount = when (algo) {
+                FloodFillAlgo.SimpleFill -> this.simpleFill(pos.x, pos.y)
+                FloodFillAlgo.AdvancedFill -> this.advancedFill(pos.x, pos.y)
+            }
+            val include = fillCount > this.you.length
+            if (!include) {
+                logger.info { "[SpanFill] FloodFill $it - fill count: $fillCount <= length: ${this.you.length}" }
+            }
+            include
+        }
+    }
 
     // Returns the number of "filled" pixels
-    fun BoardState.simpleFill(x: Int, y: Int): Int {
+    private fun BoardState.simpleFill(x: Int, y: Int): Int {
         var count = 0
         val stack = mutableSetOf(Position(x, y))
         val filledPixel = this.avoidPositions.toMutableSet()
@@ -26,18 +51,17 @@ object SpanFilling {
         return count
     }
 
-
     private val setList = mutableSetOf<Position>()
 
-    // Returns the number of "filled" pixels
-    fun BoardState.fill(startX: Int, startY: Int): Int {
+    // WIP: somehow inf loop :D
+    private fun BoardState.advancedFill(startX: Int, startY: Int): Int {
         setList.clear()
 
         if (!this.inside(startX, startY)) return 0
 
-        val s = mutableSetOf<SpanFillSet>()
-        s.add(SpanFillSet(startX, startX, startY, 1))
-        s.add(SpanFillSet(startX, startX, startY - 1, -1))
+        val s = mutableSetOf<FloodFillSet>()
+        s.add(FloodFillSet(startX, startX, startY, 1))
+        s.add(FloodFillSet(startX, startX, startY - 1, -1))
 
         while (s.isNotEmpty()) {
             val cur = s.random().also { s.remove(it) }
@@ -50,25 +74,23 @@ object SpanFilling {
             if (this.inside(x, y)) {
                 while (this.inside(x - 1, y)) {
                     set(x - 1, y)
-                    x = x - 1
+                    x -= 1
                 }
             }
             if (x < x1) {
-                s.add(SpanFillSet(x, x1 - 1, y - dy, dy * -1))
+                s.add(FloodFillSet(x, x1 - 1, y - dy, dy * -1))
             }
             while (x1 <= x2) {
                 while (this.inside(x1, y)) {
                     set(x1, y)
-                    x1 = x1 + 1
+                    x1 += 1
                 }
-                s.add(SpanFillSet(x, x1 - 1, y + dy, dy))
+                s.add(FloodFillSet(x, x1 - 1, y + dy, dy))
                 if (x1 - 1 > x2) {
-                    s.add(SpanFillSet(x2 + 1, x1 - 1, y - dy, dy * -1))
+                    s.add(FloodFillSet(x2 + 1, x1 - 1, y - dy, dy * -1))
                 }
-                x1 = x1 + 1
-                while (x1 < x2 && !this.inside(x1, y)) {
-                    x1 = x1 + 1
-                }
+                x1 += 1
+                while (x1 < x2 && !this.inside(x1, y)) x1 += 1
                 x = x1
             }
         }

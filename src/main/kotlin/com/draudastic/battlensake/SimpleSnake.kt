@@ -1,11 +1,9 @@
 package com.draudastic.battlensake
 
-import com.draudastic.algo.SpanFilling.fill
-import com.draudastic.models.Move
+import com.draudastic.algo.FloodFill.removeClosedAreas
 import com.draudastic.models.MoveRequest
 import com.draudastic.models.MoveResponse
 import mu.KotlinLogging
-import kotlin.system.measureTimeMillis
 
 private val logger = KotlinLogging.logger {}
 
@@ -16,29 +14,20 @@ class SimpleSnake(override val info: Info) : BattleSnake() {
         val avoidPositions = state.avoidPositions
         var possibleMoves = action.getPossibleMoves(state.you.head, avoidPositions)
 
-        logger.info { "[${info.name}] Remaining $possibleMoves" }
-
-        val elapsed = measureTimeMillis {
-            possibleMoves = removeClosedAreas(possibleMoves)
-        }
-
-        logger.info { "[${info.name}] Took $elapsed to calculate $possibleMoves" }
+        logger.info { "[${info.name}] Remaining moves: $possibleMoves" }
+        possibleMoves = state.removeClosedAreas(possibleMoves)
 
         val closestFood = state.getClosestFood()
-        val nextMove = if (closestFood != null) {
-            action.moveTowards(state.you.head, closestFood.position, possibleMoves)
-        } else {
-            possibleMoves.randomOrNull() ?: Move.values().random()
+        var target = state.you.body.last().position
+
+        if (closestFood != null && state.you.health < 20) {
+            target = closestFood.position
         }
+
+        val nextMove = action.moveTowards(state.you.head, target, possibleMoves)
 
         logger.info { "[${info.name}] Go $nextMove!" }
         return MoveResponse(nextMove)
     }
 
-    private fun removeClosedAreas(possibleMoves: Collection<Move>): Collection<Move> {
-        return possibleMoves.filter {
-            val pos = state.you.head.getMovePosition(it)
-            state.fill(pos.x, pos.y) > state.you.length
-        }
-    }
 }

@@ -6,13 +6,17 @@ import com.draudastic.utils.distance
 class BoardState {
     private lateinit var moveRequest: MoveRequest
 
-    val isWrapped: Boolean by lazy { moveRequest.game.ruleset.name == "wrapped" }
+    val isWrapped: Boolean
+        get() = moveRequest.game.ruleset.name == "wrapped"
 
-    val boardWidth: Int by lazy { moveRequest.board.width }
-    val boardHeight: Int by lazy { moveRequest.board.height }
+    val boardWidth: Int
+        get() = moveRequest.board.width
+
+    val boardHeight: Int
+        get() = moveRequest.board.height
 
     val avoidPositions: Set<Position>
-        get() = getStaticAvoidPositions()
+        get() = getAvoidPositions()
 
     val you: Snake
         get() = moveRequest.you
@@ -23,7 +27,7 @@ class BoardState {
     val otherSnakes: Collection<Snake>
         get() = moveRequest.board.snakes.filter { it.id != you.id }
 
-    private val wallPositions: Set<Position> by lazy {
+    private fun wallPositions(): Set<Position> {
         val walls = mutableSetOf<Position>()
         for (x in 0 until boardWidth) {
             walls += Position(x, -1)
@@ -33,14 +37,14 @@ class BoardState {
             walls += Position(-1, y)
             walls += Position(boardWidth, y)
         }
-        walls
+        return walls
     }
 
-    private fun getStaticAvoidPositions(): HashSet<Position> {
+    private fun getAvoidPositions(): HashSet<Position> {
         val avoidPositions = mutableSetOf<Position>().toHashSet()
         // avoid walls if not wrapped
         if (!isWrapped)
-            avoidPositions += wallPositions
+            avoidPositions += wallPositions()
         // avoid snakes
         val snakes = board.snakes.flatMap { snake -> snake.body.map { body -> body.position } }
         avoidPositions += snakes

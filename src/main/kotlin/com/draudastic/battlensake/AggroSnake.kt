@@ -7,7 +7,6 @@ import mu.KotlinLogging
 
 private val logger = KotlinLogging.logger {}
 
-
 class AggroSnake(override val info: Info) : BattleSnake() {
 
     override fun decideMove(moveRequest: MoveRequest): MoveResponse {
@@ -29,6 +28,7 @@ class AggroSnake(override val info: Info) : BattleSnake() {
             closestSnake?.let { victim ->
                 val possibleMovesByEnemy = getPossibleMoves(victim.head, avoidPositions)
                 targetPosition = getMovePosition(victim.head, possibleMovesByEnemy.randomOrNull() ?: Move.Up)
+                logger.info { "[${info.name}] Attack ${victim.name}" }
             }
         }
 

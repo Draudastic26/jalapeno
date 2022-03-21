@@ -26,7 +26,7 @@ object FloodFill {
             }
             val include = fillCount > this.you.length
             if (!include) {
-                logger.info { "[SpanFill] FloodFill $it - fill count: $fillCount <= length: ${this.you.length}" }
+                logger.info { "[FloodFill] Removing $it - fill count: $fillCount <= length: ${this.you.length}" }
             }
             include
         }

@@ -41,30 +41,30 @@ enum class Move {
 }
 
 @Serializable
-data class Game(val id: String, val ruleset: Ruleset, val timeout: Int, val source: String)
+data class Game(val id: String, val ruleset: Ruleset, val timeout: Int, val source: String = "")
 
 @Serializable
-data class Ruleset(val name: String, val version: String, val settings: Settings)
+data class Ruleset(val name: String, val version: String, val settings: Settings = Settings())
 
 @Serializable
 data class Settings(
-    val foodSpawnChance: Int,
-    val minimumFood: Int,
-    val hazardDamagePerTurn: Int,
+    val foodSpawnChance: Int = 10,
+    val minimumFood: Int = 1,
+    val hazardDamagePerTurn: Int = 1,
     val map: String = "default",
-    val royale: Royale,
-    val squad: Squad
+    val royale: Royale = Royale(),
+    val squad: Squad = Squad()
 )
 
 @Serializable
-data class Royale(val shrinkEveryNTurns: Int)
+data class Royale(val shrinkEveryNTurns: Int = 1)
 
 @Serializable
 data class Squad(
-    val allowBodyCollisions: Boolean,
-    val sharedElimination: Boolean,
-    val sharedHealth: Boolean,
-    val sharedLength: Boolean,
+    val allowBodyCollisions: Boolean = true,
+    val sharedElimination: Boolean = false,
+    val sharedHealth: Boolean = false,
+    val sharedLength: Boolean = false,
 )
 
 @Serializable
@@ -72,7 +72,7 @@ data class Board(
     val height: Int,
     val width: Int,
     val food: Collection<Food>,
-    val hazards: Collection<Hazard>,
+    val hazards: Collection<Hazard> = emptyList(),
     val snakes: Collection<Snake>
 )
 
@@ -82,12 +82,12 @@ data class Snake(
     val id: String,
     val health: Int,
     val body: List<Body>,
-    val latency: String,
-    val head: Position,
-    val length: Int,
-    val shout: String,
+    val latency: String = "",
+    val head: Position = Position(0, 0),
+    val length: Int = 0,
+    val shout: String = "",
     val squad: String = "",
-    val customizations: Customizations,
+    val customizations: Customizations = Customizations("ffffff", "", ""),
 ) {
     fun bodyPosition(pos: Int) = body[pos].position
 }

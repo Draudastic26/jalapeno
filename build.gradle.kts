@@ -28,10 +28,14 @@ dependencies {
     implementation("ch.qos.logback:logback-classic:$logback_version")
     implementation("io.github.microutils:kotlin-logging-jvm:$kotlinlogging_version")
 
+    testImplementation(kotlin("test"))
     testImplementation("io.ktor:ktor-server-tests-jvm:$ktor_version")
-    testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
 }
 
 tasks.create("stage") {
     dependsOn("installDist")
+}
+
+tasks.test {
+    useJUnitPlatform()
 }

@@ -1,9 +1,6 @@
 package com.draudastic.battlensake
 
-import com.draudastic.models.Food
-import com.draudastic.models.Move
-import com.draudastic.models.MoveRequest
-import com.draudastic.models.Position
+import com.draudastic.models.*
 import com.draudastic.utils.distance
 
 class SnakeUtils(private val moveRequest: MoveRequest) {
@@ -12,6 +9,9 @@ class SnakeUtils(private val moveRequest: MoveRequest) {
     val height = moveRequest.board.height
     private val foods = moveRequest.board.food
     private val head = moveRequest.you.head
+    private val allSnakes = moveRequest.board.snakes
+    val otherSnakes = moveRequest.board.snakes.filter { it.id != you.id }
+    val you = moveRequest.you
 
     val isWrapped = moveRequest.game.ruleset.name == "wrapped"
 
@@ -40,7 +40,11 @@ class SnakeUtils(private val moveRequest: MoveRequest) {
         } else foods.minByOrNull { distance(head, it.position) }
     }
 
-    fun getStaticAvoidPositions(includeHazards: Boolean = true): HashSet<Position> {
+    fun getClosestEnemy(): Snake? {
+        return otherSnakes.minByOrNull { distance(head, it.head) }
+    }
+
+    fun getStaticAvoidPositions(includeHazards: Boolean = true): MutableSet<Position> {
         val avoidPositions = mutableSetOf<Position>().toHashSet()
         // avoid walls if not wrapped
         if (!isWrapped)
@@ -68,7 +72,7 @@ class SnakeUtils(private val moveRequest: MoveRequest) {
     }
 }
 
-fun getPossibleMoves(head: Position, avoidPositions: HashSet<Position>): Collection<Move> {
+fun getPossibleMoves(head: Position, avoidPositions: MutableSet<Position>): Collection<Move> {
     val possibleMoves = mutableListOf(Move.Up, Move.Right, Move.Down, Move.Left)
     Move.values().forEach { move ->
         val nextPos = getMovePosition(head, move)
@@ -93,4 +97,18 @@ fun getMovePosition(start: Position, direction: Move): Position {
         Move.Down -> Position(start.x, start.y - 1)
         Move.Left -> Position(start.x - 1, start.y)
     }
+}
+
+fun getAllMovePositions(start: Position): Collection<Position> {
+    return Move.values().map { getMovePosition(start, it) }
+}
+
+fun goToPosition(head: Position, targetPosition: Position, possibleMoves: Collection<Move>): Move {
+    return possibleMoves.minByOrNull { distance(getMovePosition(head, it), targetPosition) }
+        ?: possibleMoves.random()
+}
+
+fun Snake.isLargestSnake(snakes: Collection<Snake>): Boolean {
+    val otherSnakesLargerOrSame = snakes.filter { it.id != this.id && it.length >= this.length }
+    return otherSnakesLargerOrSame.isEmpty()
 }

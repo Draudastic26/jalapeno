@@ -21,9 +21,10 @@ class SimpleSnake(override val info: Info) : BattleSnake() {
         var target = state.you.body.last().position
 
         val closestFood = state.getClosestFood()
-        if (closestFood != null && noBigSnakeNearby(closestFood.position)) {
+        if (closestFood != null && !largerSnakeNearby(closestFood.position)) {
             target = closestFood.position
         }
+
 
         val nextMove = action.moveTowards(state.you.head, target, possibleMoves)
 
@@ -31,9 +32,9 @@ class SimpleSnake(override val info: Info) : BattleSnake() {
         return MoveResponse(nextMove)
     }
 
-    private fun noBigSnakeNearby(pos: Position): Boolean {
+    private fun largerSnakeNearby(pos: Position): Boolean {
         val adjacentPositions = pos.getAllMovePositions()
-        val otherHeads = state.otherSnakes.map { it.body.first().position }
-        return adjacentPositions.any { it in otherHeads }
+        val otherBigHeads = state.otherSnakes.filter { it.length > state.you.length }.map { it.body.first().position }
+        return adjacentPositions.any { it in otherBigHeads }
     }
 }

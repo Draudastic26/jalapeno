@@ -14,13 +14,12 @@ class SimpleSnake(override val info: Info) : BattleSnake() {
         val utils = SnakeUtils(moveRequest)
 
         val avoidPositions = utils.getStaticAvoidPositions()
-        avoidPositions += utils.otherSnakes.flatMap { getAllMovePositions(it.head) }
 
-        val possibleMoves = getPossibleMoves(moveRequest.you.head, avoidPositions)
+        val possibleMoves = getPossibleMoves(utils.you.head, avoidPositions)
 
         val closestFood = utils.getClosestFood()
         val nextMove = if (closestFood != null) {
-            goToPosition(moveRequest.you.head, closestFood.position, possibleMoves)
+            goToPosition(utils.you.head, closestFood.position, possibleMoves)
         } else {
             possibleMoves.random()
         }

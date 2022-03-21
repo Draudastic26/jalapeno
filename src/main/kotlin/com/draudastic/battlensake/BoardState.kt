@@ -12,10 +12,14 @@ class BoardState {
     val boardWidth: Int by lazy { moveRequest.board.width }
     val boardHeight: Int by lazy { moveRequest.board.height }
 
-    val you = moveRequest.you
-    val board = moveRequest.board
+    val you: Snake
+        get() = moveRequest.you
 
-    val otherSnakes = moveRequest.board.snakes.filter { it.id != you.id }
+    val board: Board
+        get() = moveRequest.board
+
+    val otherSnakes: Collection<Snake>
+        get() = moveRequest.board.snakes.filter { it.id != you.id }
 
     private val wallPositions: Set<Position> by lazy {
         val walls = mutableSetOf<Position>()

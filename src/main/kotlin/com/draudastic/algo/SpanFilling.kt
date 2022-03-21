@@ -7,6 +7,26 @@ data class SpanFillSet(val x1: Int, val x2: Int, val y: Int, val dy: Int)
 
 object SpanFilling {
 
+    // Returns the number of "filled" pixels
+    fun BoardState.simpleFill(x: Int, y: Int): Int {
+        var count = 0
+        val stack = mutableSetOf(Position(x, y))
+        val filledPixel = this.avoidPositions.toMutableSet()
+        while (stack.isNotEmpty() && count <= this.you.length) {
+            val pos = stack.last().also { stack.remove(it) }
+            if (pos !in filledPixel) {
+                count += 1
+                filledPixel.add(pos)
+                stack.add(Position(pos.x, pos.y + 1))
+                stack.add(Position(pos.x, pos.y - 1))
+                stack.add(Position(pos.x + 1, pos.y))
+                stack.add(Position(pos.x - 1, pos.y))
+            }
+        }
+        return count
+    }
+
+
     private val setList = mutableSetOf<Position>()
 
     // Returns the number of "filled" pixels
@@ -15,12 +35,12 @@ object SpanFilling {
 
         if (!this.inside(startX, startY)) return 0
 
-        val s = mutableListOf<SpanFillSet>()
+        val s = mutableSetOf<SpanFillSet>()
         s.add(SpanFillSet(startX, startX, startY, 1))
         s.add(SpanFillSet(startX, startX, startY - 1, -1))
 
         while (s.isNotEmpty()) {
-            val cur = s.random()
+            val cur = s.random().also { s.remove(it) }
             var x1 = cur.x1
             val x2 = cur.x2
             val y = cur.y
@@ -45,8 +65,8 @@ object SpanFilling {
                 if (x1 - 1 > x2) {
                     s.add(SpanFillSet(x2 + 1, x1 - 1, y - dy, dy * -1))
                 }
-                x1 = x1 * 1
-                while(x1 < x2 && !this.inside(x1, y)) {
+                x1 = x1 + 1
+                while (x1 < x2 && !this.inside(x1, y)) {
                     x1 = x1 + 1
                 }
                 x = x1

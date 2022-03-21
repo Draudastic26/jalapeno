@@ -21,7 +21,7 @@ abstract class BattleSnake {
     }
 
     fun start(startRequest: StartRequest) {
-        logger.info { "[${info.name}] Start! Mode: ${startRequest.game.ruleset.name}" }
+        logger.info { "[${info.name}] Start! ${startRequest.game}" }
     }
 
     fun move(moveRequest: MoveRequest): MoveResponse {

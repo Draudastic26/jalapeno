@@ -35,7 +35,7 @@ class SimpleSnake(override val info: Info) : BattleSnake() {
 
     private fun largerSnakeNearby(pos: Position): Boolean {
         val adjacentPositions = pos.getAllMovePositions()
-        val otherBigHeads = state.otherSnakes.filter { it.length > state.you.length }.map { it.body.first().position }
+        val otherBigHeads = state.otherSnakes.filter { it.length >= state.you.length }.map { it.body.first().position }
         return adjacentPositions.any { it in otherBigHeads }
     }
 }

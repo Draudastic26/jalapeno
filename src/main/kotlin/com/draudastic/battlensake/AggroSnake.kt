@@ -11,28 +11,27 @@ class AggroSnake(override val info: Info) : BattleSnake() {
 
     override fun decideMove(moveRequest: MoveRequest): MoveResponse {
         // Avoid static fields
-        val utils = SnakeUtils(moveRequest)
-        val avoidPositions = utils.getStaticAvoidPositions(includeHazards = false)
-        val possibleMoves = getPossibleMoves(utils.you.head, avoidPositions)
+        val avoidPositions = state.staticAvoidPositions
+        val possibleMoves = action.getPossibleMoves(state.you.head, avoidPositions)
 
-        val defaultTarget = utils.you.body.last().position
+        val defaultTarget = state.you.body.last().position
         var targetPosition = defaultTarget
 
         // Go to food if not the largest snake or health < 25
-        if (!moveRequest.you.isLargestSnake(moveRequest.board.snakes) || utils.you.health < 25) {
-            targetPosition = utils.getClosestFood()?.position ?: defaultTarget
+        if (!moveRequest.you.isLargestSnake(moveRequest.board.snakes) || state.you.health < 25) {
+            targetPosition = state.getClosestFood()?.position ?: defaultTarget
             logger.info { "[${info.name}] Go to closest food at $targetPosition" }
         } else {
             // Try to attack others
-            val closestSnake = utils.getClosestEnemy()
+            val closestSnake = state.getClosestEnemy()
             closestSnake?.let { victim ->
-                val possibleMovesByEnemy = getPossibleMoves(victim.head, avoidPositions)
-                targetPosition = getMovePosition(victim.head, possibleMovesByEnemy.randomOrNull() ?: Move.Up)
+                val possibleMovesByEnemy = action.getPossibleMoves(victim.head, avoidPositions)
+                targetPosition = victim.head.getMovePosition(possibleMovesByEnemy.randomOrNull() ?: Move.Up)
                 logger.info { "[${info.name}] Attack ${victim.name}" }
             }
         }
 
-        val nextMove = goToPosition(moveRequest.you.head, targetPosition, possibleMoves)
+        val nextMove = action.moveTowards(moveRequest.you.head, targetPosition, possibleMoves)
         logger.info { "[${info.name}] Go $nextMove!" }
         return MoveResponse(nextMove)
     }

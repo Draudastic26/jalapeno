@@ -3,6 +3,7 @@ package com.draudastic.battlensake
 import com.draudastic.algo.FloodFill.removeClosedAreas
 import com.draudastic.models.MoveRequest
 import com.draudastic.models.MoveResponse
+import com.draudastic.models.Position
 import mu.KotlinLogging
 
 private val logger = KotlinLogging.logger {}
@@ -17,10 +18,10 @@ class SimpleSnake(override val info: Info) : BattleSnake() {
         logger.info { "[${info.name}] Remaining moves: $possibleMoves" }
         possibleMoves = state.removeClosedAreas(possibleMoves)
 
-        val closestFood = state.getClosestFood()
         var target = state.you.body.last().position
 
-        if (closestFood != null) {
+        val closestFood = state.getClosestFood()
+        if (closestFood != null && noBigSnakeNearby(closestFood.position)) {
             target = closestFood.position
         }
 
@@ -30,4 +31,9 @@ class SimpleSnake(override val info: Info) : BattleSnake() {
         return MoveResponse(nextMove)
     }
 
+    private fun noBigSnakeNearby(pos: Position): Boolean {
+        val adjacentPositions = pos.getAllMovePositions()
+        val otherHeads = state.otherSnakes.map { it.body.first().position }
+        return adjacentPositions.any { it in otherHeads }
+    }
 }

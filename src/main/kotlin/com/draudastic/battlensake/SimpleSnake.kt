@@ -5,6 +5,7 @@ import com.draudastic.models.Move
 import com.draudastic.models.MoveRequest
 import com.draudastic.models.MoveResponse
 import mu.KotlinLogging
+import kotlin.system.measureTimeMillis
 
 private val logger = KotlinLogging.logger {}
 
@@ -15,16 +16,20 @@ class SimpleSnake(override val info: Info) : BattleSnake() {
         val avoidPositions = state.avoidPositions
         var possibleMoves = action.getPossibleMoves(state.you.head, avoidPositions)
 
-        possibleMoves = removeClosedAreas(possibleMoves)
+        logger.info { "[${info.name}] Remaining $possibleMoves" }
+
+        val elapsed = measureTimeMillis {
+            possibleMoves = removeClosedAreas(possibleMoves)
+        }
+
+        logger.info { "[${info.name}] Took $elapsed to calculate $possibleMoves" }
 
         val closestFood = state.getClosestFood()
         val nextMove = if (closestFood != null) {
             action.moveTowards(state.you.head, closestFood.position, possibleMoves)
         } else {
-            possibleMoves.random()
+            possibleMoves.randomOrNull() ?: Move.values().random()
         }
-
-
 
         logger.info { "[${info.name}] Go $nextMove!" }
         return MoveResponse(nextMove)

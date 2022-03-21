@@ -20,7 +20,7 @@ fun Application.module() {
 
     // Init your snakes here 🐍
     val jalapeno = SimpleSnake(
-        Info("Jalapeño", "#004d00", "pixel", "pixel", "1.0.0")
+        Info("Jalapeno", "#004d00", "pixel", "pixel", "1.0.0")
     )
     val habanero = AggroSnake(
         Info("Habanero", "#c11e2b", "pixel", "pixel", "1.0.0")

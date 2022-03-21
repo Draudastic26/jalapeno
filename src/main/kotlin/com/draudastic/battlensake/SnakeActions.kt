@@ -17,6 +17,6 @@ class SnakeActions {
 
     fun moveTowards(head: Position, targetPosition: Position, possibleMoves: Collection<Move>): Move {
         return possibleMoves.minByOrNull { distance(head.getMovePosition(it), targetPosition) }
-            ?: possibleMoves.randomOrNull() ?: Move.Up
+            ?: possibleMoves.randomOrNull() ?: Move.values().random()
     }
 }

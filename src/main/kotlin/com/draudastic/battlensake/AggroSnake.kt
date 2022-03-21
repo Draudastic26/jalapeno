@@ -11,7 +11,7 @@ class AggroSnake(override val info: Info) : BattleSnake() {
 
     override fun decideMove(moveRequest: MoveRequest): MoveResponse {
         // Avoid static fields
-        val avoidPositions = state.staticAvoidPositions
+        val avoidPositions = state.avoidPositions
         val possibleMoves = action.getPossibleMoves(state.you.head, avoidPositions)
 
         val defaultTarget = state.you.body.last().position

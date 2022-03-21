@@ -6,11 +6,13 @@ import com.draudastic.utils.distance
 class BoardState {
     private lateinit var moveRequest: MoveRequest
 
-    val staticAvoidPositions: Set<Position> by lazy { getStaticAvoidPositions() }
     val isWrapped: Boolean by lazy { moveRequest.game.ruleset.name == "wrapped" }
 
     val boardWidth: Int by lazy { moveRequest.board.width }
     val boardHeight: Int by lazy { moveRequest.board.height }
+
+    val avoidPositions: Set<Position>
+        get() = getStaticAvoidPositions()
 
     val you: Snake
         get() = moveRequest.you

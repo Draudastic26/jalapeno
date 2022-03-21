@@ -10,7 +10,7 @@ private val logger = KotlinLogging.logger {}
 class SimpleSnake(override val info: Info) : BattleSnake() {
 
     override fun decideMove(moveRequest: MoveRequest): MoveResponse {
-        val avoidPositions = state.staticAvoidPositions
+        val avoidPositions = state.avoidPositions
         val possibleMoves = action.getPossibleMoves(state.you.head, avoidPositions)
 
         val closestFood = state.getClosestFood()

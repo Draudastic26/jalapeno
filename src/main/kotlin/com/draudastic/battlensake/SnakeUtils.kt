@@ -10,8 +10,8 @@ class SnakeUtils(private val moveRequest: MoveRequest) {
     private val foods = moveRequest.board.food
     private val head = moveRequest.you.head
     private val allSnakes = moveRequest.board.snakes
-    val otherSnakes = moveRequest.board.snakes.filter { it.id != you.id }
     val you = moveRequest.you
+    val otherSnakes = moveRequest.board.snakes.filter { it.id != you.id }
 
     val isWrapped = moveRequest.game.ruleset.name == "wrapped"
 

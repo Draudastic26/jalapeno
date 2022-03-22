@@ -3,20 +3,24 @@ package com.draudastic.battlensake
 import com.draudastic.algo.FloodFill.removeClosedAreas
 import com.draudastic.models.Move
 import com.draudastic.models.MoveRequest
-import com.draudastic.models.MoveResponse
 import mu.KotlinLogging
 
 private val logger = KotlinLogging.logger {}
 
 class AggroSnake(override val info: Info) : BattleSnake() {
 
-    override fun decideMove(moveRequest: MoveRequest): MoveResponse {
+    override fun decideMove(moveRequest: MoveRequest): Move {
         // Avoid static fields
         val avoidPositions = state.avoidPositions
         var possibleMoves = action.getPossibleMoves(state.you.head, avoidPositions)
 
         logger.info { "[${info.name}] Remaining moves: $possibleMoves" }
-        possibleMoves = state.removeClosedAreas(possibleMoves)
+        val possibleMovesAvoidLargerSnakes =
+            possibleMoves.filter { !state.largerSnakeNearby(state.you.head.getMovePosition(it)) }
+        if (possibleMovesAvoidLargerSnakes.isNotEmpty()) possibleMoves = possibleMovesAvoidLargerSnakes
+
+        val possibleMovesWithoutClosedAreaMove = state.removeClosedAreas(possibleMoves)
+        if (possibleMovesWithoutClosedAreaMove.isNotEmpty()) possibleMoves = possibleMovesWithoutClosedAreaMove
 
         val defaultTarget = state.you.body.last().position
         var targetPosition = defaultTarget
@@ -37,6 +41,6 @@ class AggroSnake(override val info: Info) : BattleSnake() {
 
         val nextMove = action.moveTowards(moveRequest.you.head, targetPosition, possibleMoves)
         logger.info { "[${info.name}] Go $nextMove!" }
-        return MoveResponse(nextMove)
+        return nextMove
     }
 }

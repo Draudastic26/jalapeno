@@ -10,7 +10,7 @@ data class Info(val name: String, val color: String, val head: String, val tail:
 abstract class BattleSnake {
 
     abstract val info: Info
-    protected abstract fun decideMove(moveRequest: MoveRequest): MoveResponse
+    protected abstract fun decideMove(moveRequest: MoveRequest): Move
 
     protected val state = BoardState()
     protected val action = SnakeActions()
@@ -26,7 +26,7 @@ abstract class BattleSnake {
 
     fun move(moveRequest: MoveRequest): MoveResponse {
         state.update(moveRequest)
-        return decideMove(moveRequest)
+        return MoveResponse(decideMove(moveRequest))
     }
 
     fun end(endRequest: EndRequest) {

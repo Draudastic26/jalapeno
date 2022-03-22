@@ -82,18 +82,18 @@ data class Snake(
     val id: String,
     val health: Int,
     val body: List<Body>,
-    val latency: String = "",
+    val latency: Int = 0,
     val head: Position = Position(0, 0),
     val length: Int = 0,
     val shout: String = "",
     val squad: String = "",
-    val customizations: Customizations = Customizations("ffffff", "", ""),
+    val customizations: Customizations = Customizations(),
 ) {
     fun bodyPosition(pos: Int) = body[pos].position
 }
 
 @Serializable
-data class Customizations(val color: String, val head: String, val tail: String)
+data class Customizations(val color: String = "#ffffff", val head: String = "default", val tail: String = "default")
 
 @Serializable
 data class Body(val x: Int, val y: Int) {

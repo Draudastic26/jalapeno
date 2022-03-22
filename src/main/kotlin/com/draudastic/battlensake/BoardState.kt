@@ -47,7 +47,6 @@ class BoardState {
             avoidPositions += wallPositions()
         // avoid snakes
         val snakes = board.snakes.flatMap { snake -> snake.body.map { body -> body.position } }
-        // Add own head again
         avoidPositions += snakes
         // Add wrapped snake positions to avoid
         if (isWrapped) {
@@ -76,5 +75,11 @@ class BoardState {
 
     fun getClosestEnemy(): Snake? {
         return otherSnakes.minByOrNull { distance(you.head, it.head) }
+    }
+
+    fun largerSnakeNearby(pos: Position): Boolean {
+        val adjacentPositions = pos.getAllMovePositions()
+        val otherBigHeads = otherSnakes.filter { it.length >= you.length }.map { it.body.first().position }
+        return adjacentPositions.any { it in otherBigHeads }
     }
 }

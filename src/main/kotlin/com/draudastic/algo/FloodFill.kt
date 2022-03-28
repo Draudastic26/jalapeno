@@ -14,6 +14,21 @@ enum class FloodFillAlgo { SimpleFill, AdvancedFill }
 
 object FloodFill {
 
+    fun BoardState.getFillCount(
+        possibleMoves: Collection<Move>,
+        algo: FloodFillAlgo = FloodFillAlgo.SimpleFill
+    ): Map<Move, Int> {
+        return possibleMoves.associateWith {
+            val pos = this.you.head.getMovePosition(it)
+            val fillCount = when (algo) {
+                FloodFillAlgo.SimpleFill -> this.simpleFill(pos.x, pos.y)
+                FloodFillAlgo.AdvancedFill -> this.advancedFill(pos.x, pos.y)
+            }
+            logger.info { "[$algo] $it fill count: $fillCount" }
+            fillCount
+        }
+    }
+
     fun BoardState.removeClosedAreas(
         possibleMoves: Collection<Move>,
         algo: FloodFillAlgo = FloodFillAlgo.SimpleFill

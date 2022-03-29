@@ -82,4 +82,15 @@ internal class BattleSnakeTest {
         // then
         assertContains(acceptedMoves, response.move)
     }
+
+    @ParameterizedTest(name = "[{index}] {0}")
+    @MethodSource("passRequest")
+    fun `ChallengeSnake should pass all requests`(name: String, request: MoveRequest, acceptedMoves: Collection<Move>) {
+        // given
+        val snake = ChallengeSnake(defaultInfo)
+        // when
+        val response = snake.move(request)
+        // then
+        assertContains(acceptedMoves, response.move)
+    }
 }

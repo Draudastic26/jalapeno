@@ -33,9 +33,13 @@ fun Application.module() {
     val habanero = AggroSnake(
         Info("Habanero", "#c11e2b", "pixel", "pixel", "1.0.0")
     )
+    val santaFeGrande = AggroSnake(
+        Info("SantaFeGrande", "#bd6f02", "pixel", "pixel", "1.0.0")
+    )
     val snakes = listOf(
         jalapeno,
-        habanero
+        habanero,
+        santaFeGrande
     )
 
     configureRoutings(snakes)

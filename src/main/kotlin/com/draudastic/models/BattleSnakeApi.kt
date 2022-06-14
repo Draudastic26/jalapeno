@@ -4,14 +4,17 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
+sealed class GameResponse
+
+@Serializable
 data class InfoResponse(
-    val apiversion: String,
-    val author: String,
-    val color: String,
-    val head: String,
-    val tail: String,
-    val version: String,
-)
+    val apiversion: String = "1",
+    val author: String = "Draudastic",
+    val color: String = "#ffffff",
+    val head: String = "default",
+    val tail: String = "default",
+    val version: String = "0.1",
+) : GameResponse()
 
 @Serializable
 data class StartRequest(val game: Game, val turn: Int, val board: Board, val you: Snake)
@@ -23,7 +26,13 @@ data class EndRequest(val game: Game, val turn: Int, val board: Board, val you: 
 data class MoveRequest(val game: Game, val turn: Int, val board: Board, val you: Snake)
 
 @Serializable
-data class MoveResponse(val move: Move, val shout: String = "Going $move!")
+object StartResponse : GameResponse()
+
+@Serializable
+class EndResponse : GameResponse()
+
+@Serializable
+data class MoveResponse(val move: Move, val shout: String = "Going $move!") : GameResponse()
 
 @Serializable
 enum class Move {

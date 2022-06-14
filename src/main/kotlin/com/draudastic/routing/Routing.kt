@@ -1,16 +1,16 @@
 package com.draudastic.routing
 
 import com.draudastic.battlensake.BattleSnake
-import com.draudastic.models.EndRequest
-import com.draudastic.models.MoveRequest
-import com.draudastic.models.StartRequest
+import com.draudastic.battlensake.Info
+import com.draudastic.core.AbstractBattleSnake
+import com.draudastic.models.*
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
-fun Application.configureRoutings(snakes: Collection<BattleSnake>) {
+fun Application.configureRoutings(snakes: Collection<BattleSnake>, newSnake: AbstractBattleSnake<*>) {
     routing {
         for (snake in snakes) {
             route("/${snake.info.name}") {
@@ -33,5 +33,25 @@ fun Application.configureRoutings(snakes: Collection<BattleSnake>) {
                 }
             }
         }
+
+        route("/new") {
+            get("/") {
+                val response = newSnake.process(call) as InfoResponse
+                call.respond(response)
+            }
+            post("/start") {
+                val response = newSnake.process(call) as StartResponse
+                call.respond(response)
+            }
+            post("/move") {
+                val response = newSnake.process(call) as MoveResponse
+                call.respond(response)
+            }
+            post("/end") {
+                val response = newSnake.process(call) as EndResponse
+                call.respond(response)
+            }
+        }
+
     }
 }

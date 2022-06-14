@@ -1,8 +1,6 @@
 package com.draudastic
 
-import com.draudastic.battlensake.AggroSnake
-import com.draudastic.battlensake.Info
-import com.draudastic.battlensake.SimpleSnake
+import com.draudastic.battlensake.*
 import com.draudastic.routing.configureRoutings
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
@@ -33,7 +31,7 @@ fun Application.module() {
     val habanero = AggroSnake(
         Info("Habanero", "#c11e2b", "pixel", "pixel", "1.0.0")
     )
-    val santaFeGrande = AggroSnake(
+    val santaFeGrande = ChallengeSnake(
         Info("SantaFeGrande", "#bd6f02", "pixel", "pixel", "1.0.0")
     )
     val snakes = listOf(
@@ -42,5 +40,5 @@ fun Application.module() {
         santaFeGrande
     )
 
-    configureRoutings(snakes)
+    configureRoutings(snakes, ExampleSnake)
 }
